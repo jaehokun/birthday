@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>생일 초대장 작성</title>
-  <!-- ✅ Firebase CDN (호환 모드) -->
+
+  <!-- ✅ Firebase 8버전 CDN 스크립트 추가 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, textarea { margin-bottom: 10px; display: block; }
+  </style>
 </head>
 <body>
   <h1>🎉 생일 초대장 작성</h1>
 
-  <label>이름: <input id="name" type="text" /></label><br />
-  <label>날짜: <input id="date" type="date" /></label><br />
-  <label>내용: <textarea id="message"></textarea></label><br />
+  <label>이름: <input id="name" type="text" /></label>
+  <label>날짜: <input id="date" type="date" /></label>
+  <label>내용: <textarea id="message"></textarea></label>
   <button onclick="save()">저장</button>
 
   <h2>✅ 저장된 데이터</h2>
@@ -31,10 +37,11 @@
       measurementId: "G-K62XNJJJKD"
     };
 
-    // ✅ Firebase 초기화
+    // ✅ 초기화
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // ✅ 저장 함수
     function save() {
       const name = document.getElementById("name").value;
       const date = document.getElementById("date").value;
@@ -45,20 +52,16 @@
         return;
       }
 
-      const id = Date.now();
-      db.ref("invites/" + id).set({
-        name: name,
-        date: date,
-        message: message
-      });
+      const newPostKey = db.ref().child("invites").push().key;
+      db.ref("invites/" + newPostKey).set({ name, date, message });
 
-      alert("저장되었습니다.");
+      alert("✅ 저장 완료!");
       document.getElementById("name").value = "";
       document.getElementById("date").value = "";
       document.getElementById("message").value = "";
     }
 
-    // ✅ 실시간 데이터 출력
+    // ✅ 실시간으로 데이터 읽기
     db.ref("invites").on("value", (snapshot) => {
       const data = snapshot.val();
       const output = document.getElementById("output");
