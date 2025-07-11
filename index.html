@@ -2,9 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>생일 초대장 저장하기</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <title>생일 초대장 작성</title>
+  <!-- ✅ Firebase CDN (호환 모드) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
   <h1>🎉 생일 초대장 작성</h1>
@@ -18,7 +19,7 @@
   <div id="output"></div>
 
   <script>
-    // ✅ 당신의 Firebase 설정
+    // ✅ Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyBsBKKNufp50L9Na03VcSn4HH71Cjfb-tA",
       authDomain: "birthday-invite-4e53b.firebaseapp.com",
@@ -31,7 +32,7 @@
     };
 
     // ✅ Firebase 초기화
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function save() {
@@ -44,9 +45,8 @@
         return;
       }
 
-      const id = Date.now(); // 고유 ID
-
-      firebase.database().ref("invites/" + id).set({
+      const id = Date.now();
+      db.ref("invites/" + id).set({
         name: name,
         date: date,
         message: message
@@ -58,8 +58,8 @@
       document.getElementById("message").value = "";
     }
 
-    // ✅ 저장된 데이터 가져오기
-    firebase.database().ref("invites").on("value", (snapshot) => {
+    // ✅ 실시간 데이터 출력
+    db.ref("invites").on("value", (snapshot) => {
       const data = snapshot.val();
       const output = document.getElementById("output");
       output.innerHTML = "";
